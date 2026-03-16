@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import useAuthStore from '../store/authStore';
+import { API_CONFIG } from '../config/api';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_CONFIG.BASE_URL.replace('/api', '');
+
+const StatCard = ({ icon, label, value, color }) => (
+  <div className="bg-[#181a20] rounded-2xl border border-white/5 p-5">
+    <div className="flex items-center gap-3 mb-2">
+      <span className="text-2xl">{icon}</span>
+      <span className="text-sm text-gray-400">{label}</span>
+    </div>
+    <div className={`text-3xl font-bold ${color}`}>{value}</div>
+  </div>
+);
 
 export default function Admin() {
   const { token, user } = useAuthStore();
@@ -21,23 +31,13 @@ export default function Admin() {
 
   if (user?.role !== 'admin') {
     return (
-      <div className="flex items-center justify-center h-64 flex-col gap-4">
+      <div className="flex items-center justify-center h-64 flex-col gap-4 text-center p-8">
         <div className="text-4xl">🔒</div>
         <h2 className="text-white font-bold text-xl">Admin Access Required</h2>
         <p className="text-gray-500 text-sm">This page is restricted to administrators.</p>
       </div>
     );
   }
-
-  const StatCard = ({ icon, label, value, color }) => (
-    <div className="bg-[#181a20] rounded-2xl border border-white/5 p-5">
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-2xl">{icon}</span>
-        <span className="text-sm text-gray-400">{label}</span>
-      </div>
-      <div className={`text-3xl font-bold ${color}`}>{value}</div>
-    </div>
-  );
 
   return (
     <div className="p-4 md:p-6 space-y-6">

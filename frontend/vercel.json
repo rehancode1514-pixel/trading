@@ -1,7 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "VITE_API_URL": "https://rading-production-b5b3.up.railway.app"
+  },
   "rewrites": [
     {
       "source": "/(.*)",

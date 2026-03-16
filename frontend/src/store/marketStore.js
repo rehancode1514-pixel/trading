@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { API_CONFIG } from '../config/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+const API_URL = API_CONFIG.BASE_URL;
+const SOCKET_URL = API_CONFIG.SOCKET_URL;
 
 const useMarketStore = create((set, get) => ({
   tickers: {},
@@ -57,9 +58,10 @@ const useMarketStore = create((set, get) => ({
   fetchTickers: async () => {
     try {
       const response = await axios.get(`${API_URL}/m-data/tickers`);
-      set({ tickers: response.data });
+      set({ tickers: response.data || [] });
     } catch (error) {
       console.error('Error fetching tickers', error);
+      set({ tickers: [] });
     }
   },
 

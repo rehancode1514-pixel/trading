@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import useAuthStore from '../store/authStore';
 import useMarketStore from '../store/marketStore';
+import { API_CONFIG } from '../config/api';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_CONFIG.BASE_URL.replace('/api', '');
 
 const LEVERAGE_PRESETS = [1, 2, 3, 5, 10, 20, 50, 100, 125];
 const PAIRS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'DOGE/USDT', 'XRP/USDT'];
@@ -35,24 +35,28 @@ export default function Futures() {
       : (currentPrice * (1 + (1/leverage) - mmr)).toFixed(2)
     : '—';
 
-  useEffect(() => {
-    if (token) fetchPositions();
-    fetchFunding();
-  }, [token]);
-
-  const fetchPositions = async () => {
+  const fetchPositions = useCallback(async () => {
     try {
       const { data } = await axios.get(`${API}/api/futures/positions`, { headers: { Authorization: `Bearer ${token}` } });
       setPositions(data);
-    } catch {}
-  };
+    } catch (error) {
+      console.error('Error fetching positions', error);
+    }
+  }, [token]);
 
-  const fetchFunding = async () => {
+  const fetchFunding = useCallback(async () => {
     try {
       const { data } = await axios.get(`${API}/api/futures/funding-rates`);
       setFunding(data);
-    } catch {}
-  };
+    } catch (error) {
+      console.error('Error fetching funding', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) fetchPositions();
+    fetchFunding();
+  }, [token, fetchPositions, fetchFunding]);
 
   const handleOpen = async () => {
     if (!size || !currentPrice) return;

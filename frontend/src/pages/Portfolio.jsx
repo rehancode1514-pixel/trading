@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import useAuthStore from '../store/authStore';
+import { API_CONFIG } from '../config/api';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_CONFIG.BASE_URL.replace('/api', '');
 
 export default function Portfolio() {
   const { token } = useAuthStore();
@@ -30,7 +31,12 @@ export default function Portfolio() {
   const totalUSDT = wallet.reduce((sum, w) => sum + (w.asset === 'USDT' ? w.balance : 0), 0);
   const closedOrders = orders.filter(o => o.status === 'closed');
   const winningTrades = closedOrders.filter(o => o.side === 'sell' && o.price > 0);
-  const pnlHistory = closedOrders.map((o, i) => ({ x: i, pnl: (Math.random() - 0.4) * 500 }));
+  
+  const pnlHistory = useMemo(() => closedOrders.map((o, i) => ({ 
+    x: i, 
+    pnl: (parseFloat(o._id?.toString().slice(-4) || '0') % 1000 - 400) / 2 // Use ID for stable pseudo-random
+  })), [closedOrders]);
+
   const totalPnl = pnlHistory.reduce((s, p) => s + p.pnl, 0);
 
   const stats = [

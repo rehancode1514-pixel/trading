@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { API_CONFIG } from '../config/api';
 
 // Get backend URL from env or default to localhost
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = API_CONFIG.BASE_URL;
 
 const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem('user')) || null,

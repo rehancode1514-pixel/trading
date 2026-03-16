@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import axios from 'axios';
 import useMarketStore from '../store/marketStore';
+import { API_CONFIG } from '../config/api';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_CONFIG.BASE_URL.replace('/api', '');
+
+const StatCard = ({ label, value, sub, color = 'text-white' }) => (
+  <div className="bg-[#181a20] rounded-2xl border border-white/5 p-4">
+    <div className="text-xs text-gray-500 mb-1">{label}</div>
+    <div className={`text-xl font-bold ${color}`}>{value}</div>
+    {sub && <div className="text-xs text-gray-600 mt-1">{sub}</div>}
+  </div>
+);
 
 export default function Analytics() {
   const { tickers } = useMarketStore();
@@ -17,14 +25,6 @@ export default function Analytics() {
   const gainers = [...pairs].sort((a, b) => (b[1]?.percentage || 0) - (a[1]?.percentage || 0)).slice(0, 5);
   const losers = [...pairs].sort((a, b) => (a[1]?.percentage || 0) - (b[1]?.percentage || 0)).slice(0, 5);
   const topVolume = [...pairs].sort((a, b) => (b[1]?.quoteVolume || 0) - (a[1]?.quoteVolume || 0)).slice(0, 5);
-
-  const StatCard = ({ label, value, sub, color = 'text-white' }) => (
-    <div className="bg-[#181a20] rounded-2xl border border-white/5 p-4">
-      <div className="text-xs text-gray-500 mb-1">{label}</div>
-      <div className={`text-xl font-bold ${color}`}>{value}</div>
-      {sub && <div className="text-xs text-gray-600 mt-1">{sub}</div>}
-    </div>
-  );
 
   return (
     <div className="p-4 md:p-6 space-y-6">

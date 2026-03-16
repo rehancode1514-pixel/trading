@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { API_CONFIG } from '../config/api';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API = API_CONFIG.BASE_URL.replace('/api', '');
 
 export default function CopyTrading() {
   const [period, setPeriod] = useState('weekly');
