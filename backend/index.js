@@ -51,7 +51,22 @@ initSocket(server);
 startTradeWorker();
 
 // Middleware
-app.use(cors({ origin: '*' }));
+const allowedOrigins = [
+  'https://trading-one-beta.vercel.app',
+  'http://localhost:5173', // Include localhost for local development if needed
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
