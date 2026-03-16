@@ -56,7 +56,7 @@ const useMarketStore = create((set, get) => ({
 
   fetchTickers: async () => {
     try {
-      const response = await axios.get(`${API_URL}/market/tickers`);
+      const response = await axios.get(`${API_URL}/m-data/tickers`);
       set({ tickers: response.data });
     } catch (error) {
       console.error('Error fetching tickers', error);

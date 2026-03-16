@@ -56,7 +56,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
-app.use('/api/market', require('./src/routes/marketRoutes'));
+app.use('/api/m-data', require('./src/routes/marketRoutes'));
 app.use('/api/trade', require('./src/routes/tradeRoutes'));
 app.use('/api/wallet', require('./src/routes/walletRoutes'));
 app.use('/api/futures', require('./src/routes/futuresRoutes'));
