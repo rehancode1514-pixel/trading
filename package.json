@@ -1,0 +1,8 @@
+{
+  "name": "trading-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix backend",
+    "build": "npm install --prefix backend"
+  }
+}
