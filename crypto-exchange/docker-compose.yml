@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  database:
+    image: mongo:latest
+    container_name: crypto_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - crypto_network
+
+  redis:
+    image: redis:alpine
+    container_name: crypto_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - crypto_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: crypto_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - crypto_network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crypto_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://database:27017/crypto-exchange
+      - JWT_SECRET=super_secret_jwt_key_cryptoX
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - database
+      - redis
+      - rabbitmq
+    networks:
+      - crypto_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: crypto_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    networks:
+      - crypto_network
+    # Required for Vite HMR (Hot Module Replacement) to work via Docker
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  mongo_data:
+
+networks:
+  crypto_network:
+    driver: bridge
